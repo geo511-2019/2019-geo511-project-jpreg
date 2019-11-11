@@ -37,12 +37,12 @@ library(rasterVis)
 library(tidyverse)
 
 #This is the road shapefile from the historic map
-roads<-read_sf("https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/master/_data/1877_roads_talbot.shp")%>%
-  st_transform(4326)
+roads<-read_sf("C:/Users/Joe/Documents/code R/2019_GEO_511_Project/_data/1877_roads_talbot.shp")%>%
+  st_transform(crs=4326)
 
 #This is the houses shapefile from the historic map and Census Data
-houses<-read_sf("https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/master/_data/1877_houses_talbot.shp")%>%
-  st_transform(4326)
+houses<-read_sf("C:/Users/Joe/Documents/code R/2019_GEO_511_Project/_data/1877_houses_talbot.shp")%>%
+  st_transform(crs=4326)
 
 #This is the elevation raster of the area, cropped to the extent of the roads shapefile
 elev_crop<-raster("https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/master/_data/cropped_elevation_raster_talbot.tif")
