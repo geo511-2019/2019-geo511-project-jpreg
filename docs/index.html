@@ -367,278 +367,96 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">I have the best titles</h1>
-<h3 class="subtitle">Subtitle here if desired</h3>
-<h4 class="author">Your name here</h4>
+<h1 class="title toc-ignore">Differences in Travel Costs in Talbot County, Md between  the White and African American Populations c. 1880</h1>
+
+<h4 class="author">Joe Prego</h4>
 
 </div>
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>My really awesome and complete introduction will go here.</p>
+<p>This project will examine the differences in spatial distance between the African American and White populations of Talbot County, Maryland during the second half of the 19th century based upon the population listed in the Lake, Griffing and Stevenson 1877 map, “An illustrated atlas of Talbot and Dorchester Counties, Maryland” and the census data from Talbot County in 1880. The Easton Market, located in Easton within greater Talbot County, was the main place to get economic resources during this period. This project will compare the travel distances between the African American and White populations to this market to test for differences in their costs of travel to obtain economic resources. These distances will be In doing so, it will as the questions, did the African American and White populations of Talbot County, Maryland have similar average costs of travel from their dwellings to the Easton town market to obtain economic resources during the later half of the 19th century?</p>
 </div>
 <div id="materials-and-methods" class="section level1">
 <h1>Materials and methods</h1>
-<p>Narrative and most code will go here. Describe what you are doing and show how to do it (with code).</p>
-<p>You can do bullets like this:</p>
-<ul>
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ul>
-<p>You can do numbers like this:</p>
-<ol style="list-style-type: decimal">
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ol>
-<p>See <a href="http://rmarkdown.rstudio.com/">http://rmarkdown.rstudio.com/</a> for all the amazing things you can do.</p>
-<p>Here’s my first code chunk.</p>
-<pre class="r"><code>1+2</code></pre>
-<pre><code>## [1] 3</code></pre>
-<p>Load any required packages in a code chunk (you may need to install some packages):</p>
-<pre class="r"><code>library(tidyverse)
-library(leaflet)
-library(kableExtra)
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling</code></pre>
-<div id="download-and-clean-all-required-data" class="section level2">
-<h2>Download and clean all required data</h2>
-<pre class="r"><code>n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))</code></pre>
-<pre class="r"><code>data %&gt;% 
-  slice(1:10) %&gt;% #show only 1:n rows
-  kable(digits=2,align=&quot;c&quot;)%&gt;% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;, &quot;responsive&quot;)) #apply other formatting</code></pre>
-<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-x
-</th>
-<th style="text-align:center;">
-y
-</th>
-<th style="text-align:center;">
-size
-</th>
-<th style="text-align:center;">
-category
-</th>
-<th style="text-align:center;">
-value
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center;">
--158.56
-</td>
-<td style="text-align:center;">
--10.71
-</td>
-<td style="text-align:center;">
-7.82
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
-0.02
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-65.97
-</td>
-<td style="text-align:center;">
--40.03
-</td>
-<td style="text-align:center;">
-13.15
-</td>
-<td style="text-align:center;">
-b
-</td>
-<td style="text-align:center;">
-1.37
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--96.14
-</td>
-<td style="text-align:center;">
--40.46
-</td>
-<td style="text-align:center;">
-15.25
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
--0.19
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-84.80
-</td>
-<td style="text-align:center;">
--50.22
-</td>
-<td style="text-align:center;">
-19.28
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
--0.98
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--70.67
-</td>
-<td style="text-align:center;">
-47.63
-</td>
-<td style="text-align:center;">
-13.17
-</td>
-<td style="text-align:center;">
-b
-</td>
-<td style="text-align:center;">
--2.38
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--132.99
-</td>
-<td style="text-align:center;">
--11.28
-</td>
-<td style="text-align:center;">
-17.05
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
-0.48
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
--102.86
-</td>
-<td style="text-align:center;">
--0.38
-</td>
-<td style="text-align:center;">
-9.33
-</td>
-<td style="text-align:center;">
-b
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-174.41
-</td>
-<td style="text-align:center;">
--16.16
-</td>
-<td style="text-align:center;">
-13.68
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
--1.17
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-86.77
-</td>
-<td style="text-align:center;">
--49.84
-</td>
-<td style="text-align:center;">
-11.86
-</td>
-<td style="text-align:center;">
-d
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-82.62
-</td>
-<td style="text-align:center;">
--51.14
-</td>
-<td style="text-align:center;">
-14.55
-</td>
-<td style="text-align:center;">
-a
-</td>
-<td style="text-align:center;">
-2.51
-</td>
-</tr>
-</tbody>
-</table>
-<p>Add any additional processing steps here.</p>
-</div>
-</div>
+<p>The code below will create the raster object that will be used to do the travel cost calculations. It will be a representation of Talbot county with different values assigned to roads, land, and water. The point shapefile will be necessary to get to “to” and “from” points when running the calculations. The gDistance package will be used to generate the least cost paths to the Easton town market for the African American and White population and compare the two. The comparison will be between the average travel costs value generated for each of the populations. In gDistance, this will be done by using the transition object that was created using the raster package which importantly contains the values for moving from cell to cell. The values will essentially be three different categories, with a small value representing roads, a high value representing non-roads, and a higher value representing water. This means, when the test is run, each time it will travel on the least cost path, therefore along the roads, to get from individual houses to the town market.</p>
+<p>For analysis, the final package that I will use will be ggplot. The results from the gDistance travel cost tests will need to be analyzed to compare the two populations. A histogram would be the easiest way to represent the results for easy analysis, and it should be accompanied by a table with the numeric results as well.</p> 
+
+</p>These packages need to be installed:</p>
+<pre class="r"><code>library(maptools)
+library(sf)
+library(raster)
+library(rgdal)
+library(methods)
+library(ggplot2)
+library(rasterVis)
+library(tidyverse)</code></pre>
+
+ 
+<h2>The code below creates the Raster of Talbot County</h2>
+<pre class="r"><code>#This is the road shapefile from the historic map
+roads<-read_sf( <a href = "https://github.com/geo511-2019/2019-geo511-project-jpreg/blob/master/1877_roads_talbot.shp">this is the link to the file on Github, it needs to be downloaded and entered behind the read_sf</a>)%>%
+  st_transform(4326)
+  
+#This is the houses shapefile from the historic map and Census Data
+houses<-read_sf( <a href = "https://github.com/geo511-2019/2019-geo511-project-jpreg/blob/master/1877_houses_talbot.shp">this is the link to the file on Github, it needs to be downloaded and entered behind the read_sf</a>)%>%
+  st_transform(4326)
+  
+#This is the cropped elevation data to the extent of the project area
+elev_crop <- load( <a href = "https://github.com/geo511-2019/2019-geo511-project-jpreg/blob/master/cropped_elevation_raster_talbot.Rdata"> this is the link to the file on Github it needs to be downloaded and entered behind the load</a>)
+
+#This assigns the proper value to water: water
+water=(elev_crop<0.001)*6
+
+#Turning the Roads Shapefile into Raster Format
+roads_raster <- rasterize(roads, water, field=1, background=4)
+
+#function for values of roads over water: bridges
+bridges <- function(x) ifelse (x==13, 1, x)
+
+#Assigning different values to the land cover types
+Land_Cover_Guide = c(
+  water=10,
+  roads=1,
+  land=4)
+
+lcd=data.frame(
+  ID=Land_Cover_Guide,
+  landcover=names(Land_Cover_Guide),
+  col=c("blue", "black", "red"),
+  stringsAsFactors = F)
+
+talbot_r <- water+roads_raster %>% calc(bridges)
+
+talbot_rf=as.factor(talbot_r)
+levels(talbot_rf)=left_join(levels(talbot_rf)[[1]], lcd)
+
+
+#The code creates a plot of the project raster
+roads_water_plot<-gplot(talbot_rf) +
+  geom_raster(mapping=aes(fill=value)) +
+  coord_cartesian() +
+  xlab("longitude") +
+  ylab("latitude")
+roads_water_plot
+  
+</code></pre>
 <div id="results" class="section level1">
 <h1>Results</h1>
-<p>Show tables, plots, etc. and describe them.</p>
-<pre class="r"><code>m &lt;- leaflet(data) %&gt;% 
-  addTiles() %&gt;% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %&gt;% 
-  addPopups(~x[2], ~y[2], &quot;Random popup&quot;)
-m  # a map with the default OSM tile layer</code></pre>
-<div class="figure">
-<div id="htmlwidget-21964bff2445112cfaa3" style="width:576px;height:288px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-21964bff2445112cfaa3">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[-10.711460346356,-40.0317905377597,-40.4555076174438,-50.2155173756182,47.6292910985649,-11.2804466765374,-0.376498885452747,-16.1596800014377,-49.8380593489856,-51.1404442694038,53.0446816887707,0.860847746953368,50.4000311996788,13.1915486231446,14.5484970230609,-19.5233625266701,-22.1989311464131,-20.2872930653393,34.8664563987404,25.3290846291929],[-158.561569629237,65.9664081875235,-96.1398610845208,84.7986636310816,-70.6749359238893,-132.994334204122,-102.858351767063,174.408668009564,86.7707368545234,82.6177708804607,-7.10339991375804,90.4363484680653,-88.1186120118946,130.402604816481,-140.091168573126,51.9535860512406,-8.97034764289856,-61.5677708107978,153.922449750826,173.010659851134],[7.81859760754742,13.1537587265484,15.2496676542796,19.275962933898,13.1700732908212,17.0470599585678,9.3293087836355,13.6791663302574,11.860959189944,14.5519951696042,14.2116628552321,6.30484858877026,6.30805606720969,19.2336411681026,5.50714594079182,13.3236373215914,6.55107771977782,9.68506402336061,18.1686515093315,13.3889109035954],null,null,{"interactive":true,"className":"","stroke":true,"color":["d","b","d","d","b","a","b","a","d","a","b","b","a","b","c","c","e","c","b","b"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["d","b","d","d","b","a","b","a","d","a","b","b","a","b","c","c","e","c","b","b"],"fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addPopups","args":[-40.0317905377597,65.9664081875235,"Random popup",null,null,{"maxWidth":300,"minWidth":50,"autoPan":true,"keepInView":false,"closeButton":true,"className":""}]}],"limits":{"lat":[-51.1404442694038,53.0446816887707],"lng":[-158.561569629237,174.408668009564]}},"evals":[],"jsHooks":[]}</script>
-<p class="caption">
-Map of completely random data
-</p>
-</div>
-<pre class="r"><code>data %&gt;% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The project raster should look like the one below. The roads may not appear clear, but this is just do to resolution differences between the actual file and the preview version in R</p>
+<p><img src="https://raw.githubusercontent.com/geo511-2019/geo511-tasks-jpreg/master/talbot_roads_water_plot.png" width="672" /></p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
 <p>What have you learned? Are there any broader implications?</p>
 </div>
+<a href="http://rmarkdown.rstudio.com/">http://rmarkdown.rstudio.com/</a>
 <div id="references" class="section level1">
 <h1>References</h1>
+<p>The first data source for this project is the Lake, Griffing and Stevenson 1877 map, "An illustrated atlas of Talbot and Dorchester Counties, Maryland".  This map is available on <a href = "https://jscholarship.library.jhu.edu/handle/1774.2/34140">Johns Hopkins Libraries.</a>  It includes the names of the property owners throughout Talbot County in 1877, along with the locations of their dwelling places.  In addition, the roads are displayed on the map, which will be used to create the travel cost raster necessary for analysis.  The location of the market is determined from another page in this atlas displaying the town of Easton in Talbot County.</p>
+
+<p>The second data source is the 1880 Talbot County Census data, available from <a href = "https://www.familysearch.org/search/catalog/1417529?availability=Family%20History%20Library">FamilySearch.</a> The names from the historic map were paired against the census record to create the necessary dataset that distinguishes between the African American and White population represented on the map.</p>
 </div>
 
 <!-- give the footer some space -->
