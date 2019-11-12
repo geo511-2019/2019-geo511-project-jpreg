@@ -403,7 +403,10 @@ houses&lt;-read_sf(&quot;_data/1877_houses_talbot.shp&quot;)%&gt;%
 
 #This is the elevation raster of the area, cropped to the extent of the roads shapefile
 elev_crop&lt;-raster(&quot;https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/master/_data/cropped_elevation_raster_talbot.tif&quot;)</code></pre>
-<p>#Creation of the Project Raster The code below will create the project raster. This raster combines the elevation tif and road shapefile into a single raster, and assigns values for the land type. Road is given a value of 1, land is given a value of 4, and water is given a value of 10. With this information, the gdistance package will eventually be able to calculate travel costs.</p>
+</div>
+<div id="creation-of-the-project-raster" class="section level1">
+<h1>Creation of the Project Raster</h1>
+<p>The code below will create the project raster. This raster combines the elevation tif and road shapefile into a single raster, and assigns values for the land type. Road is given a value of 1, land is given a value of 4, and water is given a value of 10. With this information, the gdistance package will eventually be able to calculate travel costs.</p>
 <pre class="r"><code>#This assigns the proper value to water: water
 water=(elev_crop&lt;0.001)*6
 
