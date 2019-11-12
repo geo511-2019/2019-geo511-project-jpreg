@@ -53,7 +53,7 @@ elev_crop<-raster("https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/
 
 ```
 
-#Creation of the Project Raster
+# Creation of the Project Raster
 The code below will create the project raster. This raster combines the elevation tif and road shapefile into a single raster, and assigns values for the land type.  Road is given a value of 1, land is given a value of 4, and water is given a value of 10.  With this information, the gdistance package will eventually be able to calculate travel costs.
 
 ```{r, echo=TRUE, warning=FALSE, message=FALSE, error=FALSE}
