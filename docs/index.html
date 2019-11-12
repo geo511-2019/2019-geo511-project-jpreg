@@ -10,12 +10,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Your name here" />
+<meta name="author" content="Joe Prego" />
 
 
-<title>I have the best titles</title>
+<title>Differences in Travel Costs in Talbot County, Md between the White and African American Populations c. 1880</title>
 
-<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -27,15 +27,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
-<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
-<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
-<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
-<script src="site_libs/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
-<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
-<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
-<script src="site_libs/leaflet-binding-2.0.2/leaflet.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -367,8 +358,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Differences in Travel Costs in Talbot County, Md between  the White and African American Populations c. 1880</h1>
-
+<h1 class="title toc-ignore">Differences in Travel Costs in Talbot County, Md between the White and African American Populations c. 1880</h1>
 <h4 class="author">Joe Prego</h4>
 
 </div>
@@ -380,10 +370,11 @@ div.tocify {
 </div>
 <div id="materials-and-methods" class="section level1">
 <h1>Materials and methods</h1>
-<p>The code below will create the raster object that will be used to do the travel cost calculations. It will be a representation of Talbot county with different values assigned to roads, land, and water. The point shapefile will be necessary to get to “to” and “from” points when running the calculations. The gDistance package will be used to generate the least cost paths to the Easton town market for the African American and White population and compare the two. The comparison will be between the average travel costs value generated for each of the populations. In gDistance, this will be done by using the transition object that was created using the raster package which importantly contains the values for moving from cell to cell. The values will essentially be three different categories, with a small value representing roads, a high value representing non-roads, and a higher value representing water. This means, when the test is run, each time it will travel on the least cost path, therefore along the roads, to get from individual houses to the town market.</p>
-<p>For analysis, the final package that I will use will be ggplot. The results from the gDistance travel cost tests will need to be analyzed to compare the two populations. A histogram would be the easiest way to represent the results for easy analysis, and it should be accompanied by a table with the numeric results as well.</p> 
-
-</p>These packages need to be installed:</p>
+The code below will create the raster object that will be used to do the travel cost calculations. It will be a representation of Talbot county with different values assigned to roads, land, and water. The point shapefile will be necessary to get to “to” and “from” points when running the calculations. The gDistance package will be used to generate the least cost paths to the Easton town market for the African American and White population and compare the two. The comparison will be between the average travel costs value generated for each of the populations. In gDistance, this will be done by using the transition object that was created using the raster package which importantly contains the values for moving from cell to cell. The values will essentially be three different categories, with a small value representing roads, a high value representing non-roads, and a higher value representing water. This means, when the test is run, each time it will travel on the least cost path, therefore along the roads, to get from individual houses to the town market.
+</p>
+<p>
+<p>For analysis, the final package that I will use will be ggplot. The results from the gDistance travel cost tests will need to be analyzed to compare the two populations. A histogram would be the easiest way to represent the results for easy analysis, and it should be accompanied by a table with the numeric results as well.</p>
+<p>These packages need to be installed:</p>
 <pre class="r"><code>library(maptools)
 library(sf)
 library(raster)
@@ -392,28 +383,35 @@ library(methods)
 library(ggplot2)
 library(rasterVis)
 library(tidyverse)</code></pre>
+<p>Then the shapefiles and elevation raster must be read in.</p>
+<pre class="r"><code>library(maptools)
+library(sf)
+library(raster)
+library(rgdal)
+library(methods)
+library(ggplot2)
+library(rasterVis)
+library(tidyverse)
 
- 
-<h2>The code below creates the Raster of Talbot County</h2>
-<pre class="r"><code>#This is the road shapefile from the historic map
-roads<-read_sf( <a href = "https://github.com/geo511-2019/2019-geo511-project-jpreg/blob/master/1877_roads_talbot.shp">this is the link to the file on Github, it needs to be downloaded and entered behind the read_sf</a>)%>%
-  st_transform(4326)
-  
+#This is the road shapefile from the historic map
+roads&lt;-read_sf(&quot;_data/1877_roads_talbot.shp&quot;)%&gt;%
+  st_transform(crs=4326)
+
 #This is the houses shapefile from the historic map and Census Data
-houses<-read_sf( <a href = "https://github.com/geo511-2019/2019-geo511-project-jpreg/blob/master/1877_houses_talbot.shp">this is the link to the file on Github, it needs to be downloaded and entered behind the read_sf</a>)%>%
-  st_transform(4326)
-  
-#This is the cropped elevation data to the extent of the project area
-elev_crop <- load( <a href = "https://github.com/geo511-2019/2019-geo511-project-jpreg/blob/master/cropped_elevation_raster_talbot.Rdata"> this is the link to the file on Github it needs to be downloaded and entered behind the load</a>)
+houses&lt;-read_sf(&quot;_data/1877_houses_talbot.shp&quot;)%&gt;%
+  st_transform(crs=4326)
 
-#This assigns the proper value to water: water
-water=(elev_crop<0.001)*6
+#This is the elevation raster of the area, cropped to the extent of the roads shapefile
+elev_crop&lt;-raster(&quot;https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/master/_data/cropped_elevation_raster_talbot.tif&quot;)</code></pre>
+<p>#Creation of the Project Raster The code below will create the project raster. This raster combines the elevation tif and road shapefile into a single raster, and assigns values for the land type. Road is given a value of 1, land is given a value of 4, and water is given a value of 10. With this information, the gdistance package will eventually be able to calculate travel costs.</p>
+<pre class="r"><code>#This assigns the proper value to water: water
+water=(elev_crop&lt;0.001)*6
 
 #Turning the Roads Shapefile into Raster Format
-roads_raster <- rasterize(roads, water, field=1, background=4)
+roads_raster &lt;- rasterize(roads, water, field=1, background=4)
 
 #function for values of roads over water: bridges
-bridges <- function(x) ifelse (x==13, 1, x)
+bridges &lt;- function(x) ifelse (x==13, 1, x)
 
 #Assigning different values to the land cover types
 Land_Cover_Guide = c(
@@ -424,39 +422,36 @@ Land_Cover_Guide = c(
 lcd=data.frame(
   ID=Land_Cover_Guide,
   landcover=names(Land_Cover_Guide),
-  col=c("blue", "black", "red"),
+  col=c(&quot;blue&quot;, &quot;black&quot;, &quot;red&quot;),
   stringsAsFactors = F)
 
-talbot_r <- water+roads_raster %>% calc(bridges)
+talbot_r &lt;- water+roads_raster %&gt;% calc(bridges)
 
 talbot_rf=as.factor(talbot_r)
 levels(talbot_rf)=left_join(levels(talbot_rf)[[1]], lcd)
 
-
 #The code creates a plot of the project raster
-roads_water_plot<-gplot(talbot_rf) +
+roads_water_plot&lt;-gplot(talbot_rf) +
   geom_raster(mapping=aes(fill=value)) +
   coord_cartesian() +
-  xlab("longitude") +
-  ylab("latitude")
-roads_water_plot
-  
-</code></pre>
+  xlab(&quot;longitude&quot;) +
+  ylab(&quot;latitude&quot;)
+roads_water_plot</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
 <div id="results" class="section level1">
 <h1>Results</h1>
-<p>The project raster should look like the one below. The roads may not appear clear, but this is just do to resolution differences between the actual file and the preview version in R</p>
-<p><img src="https://raw.githubusercontent.com/geo511-2019/geo511-tasks-jpreg/master/talbot_roads_water_plot.png" width="672" /></p>
+<p>This is where the results of the gdistance tests will be displayed in table format</p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
-<p>What have you learned? Are there any broader implications?</p>
 </div>
-<a href="http://rmarkdown.rstudio.com/">http://rmarkdown.rstudio.com/</a>
 <div id="references" class="section level1">
 <h1>References</h1>
-<p>The first data source for this project is the Lake, Griffing and Stevenson 1877 map, "An illustrated atlas of Talbot and Dorchester Counties, Maryland".  This map is available on <a href = "https://jscholarship.library.jhu.edu/handle/1774.2/34140">Johns Hopkins Libraries.</a>  It includes the names of the property owners throughout Talbot County in 1877, along with the locations of their dwelling places.  In addition, the roads are displayed on the map, which will be used to create the travel cost raster necessary for analysis.  The location of the market is determined from another page in this atlas displaying the town of Easton in Talbot County.</p>
-
-<p>The second data source is the 1880 Talbot County Census data, available from <a href = "https://www.familysearch.org/search/catalog/1417529?availability=Family%20History%20Library">FamilySearch.</a> The names from the historic map were paired against the census record to create the necessary dataset that distinguishes between the African American and White population represented on the map.</p>
+The first data source for this project is the Lake, Griffing and Stevenson 1877 map, “An illustrated atlas of Talbot and Dorchester Counties, Maryland”. This map is available on <a href="https://jscholarship.library.jhu.edu/handle/1774.2/34140">Johns Hopkins Library.</a> It includes the names of the property owners throughout Talbot County in 1877, along with the locations of their dwelling places. In addition, the roads are displayed on the map, which will be used to create the travel cost raster necessary for analysis. The location of the market is determined from another page in this atlas displaying the town of Easton in Talbot County.
+</p>
+<p>
+<p>The second data source is the 1880 Talbot County Census data, available from <a href="https://www.familysearch.org/search/catalog/1417529?availability=Family%20History%20Library">FamilySearch.</a> The names from the historic map were paired against the census record to create the necessary dataset that distinguishes between the African American and White population represented on the map.</p>
 </div>
 
 <!-- give the footer some space -->
