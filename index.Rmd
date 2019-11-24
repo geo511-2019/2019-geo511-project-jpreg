@@ -91,7 +91,7 @@ roads_water_plot<-gplot(talbot_rf) +
   geom_raster(mapping=aes(fill=value)) +
   coord_cartesian() +
   xlab("longitude") +
-  ylab("latitude") 
+  ylab("latitude")
 roads_water_plot
   
 ```
