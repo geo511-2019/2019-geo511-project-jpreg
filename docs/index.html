@@ -25,8 +25,10 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -250,6 +252,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -265,6 +270,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -356,6 +367,14 @@ div.tocify {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Differences in Travel Costs in Talbot County, Md between the White and African American Populations c. 1880</h1>
@@ -366,14 +385,14 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This project will examine the differences in spatial distance between the African American and White populations of Talbot County, Maryland during the second half of the 19th century based upon the population listed in the Lake, Griffing and Stevenson 1877 map, “An illustrated atlas of Talbot and Dorchester Counties, Maryland” and the census data from Talbot County in 1880. The Easton Market, located in Easton within greater Talbot County, was the main place to get economic resources during this period. This project will compare the travel distances between the African American and White populations to this market to test for differences in their costs of travel to obtain economic resources. These distances will be In doing so, it will as the questions, did the African American and White populations of Talbot County, Maryland have similar average costs of travel from their dwellings to the Easton town market to obtain economic resources during the later half of the 19th century?</p>
+<p>This project will examine the differences in spatial distance between the African American and White populations of Talbot County, Maryland during the second half of the 19th century based upon the population listed in the Lake, Griffing and Stevenson 1877 map, “An illustrated atlas of Talbot and Dorchester Counties, Maryland” and the census data from Talbot County in 1880. The Easton Market, located in Easton within greater Talbot County, was the main place to get economic resources during this period. This project will compare the travel distances between the African American and White populations to this market to test for differences in their costs of travel to obtain economic resources. In doing so, it will ask the question, did the African American and White populations of Talbot County, Maryland have similar average costs of travel from their dwellings to the Easton town market to obtain economic resources during the later half of the 19th century?</p>
 </div>
 <div id="materials-and-methods" class="section level1">
 <h1>Materials and methods</h1>
-The code below will create the raster object that will be used to do the travel cost calculations. It will be a representation of Talbot county with different values assigned to roads, land, and water. The point shapefile will be necessary to get to “to” and “from” points when running the calculations. The gDistance package will be used to generate the least cost paths to the Easton town market for the African American and White population and compare the two. The comparison will be between the average travel costs value generated for each of the populations. In gDistance, this will be done by using the transition object that was created using the raster package which importantly contains the values for moving from cell to cell. The values will essentially be three different categories, with a small value representing roads, a high value representing non-roads, and a higher value representing water. This means, when the test is run, each time it will travel on the least cost path, therefore along the roads, to get from individual houses to the town market.
-</p>
-<p>
-<p>For analysis, the final package that I will use will be ggplot. The results from the gDistance travel cost tests will need to be analyzed to compare the two populations. A histogram would be the easiest way to represent the results for easy analysis, and it should be accompanied by a table with the numeric results as well.</p>
+<p>The code below will create the raster object that will be used to do the travel cost calculations. It will be a representation of Talbot county with different values assigned to roads, land, and water. The point shapefile will be necessary to get to “to” and “from” points when running the calculations. These steps must be taken first so that the mathematical tests can be applied to the region.</p>
+<p>The gdistance package will be used to generate the least cost paths to the Easton town market for four different subsections of the entire population: the African American population, the White population, a random sample of the African American population, and a random sample of the White population. This will allow for the comparison of the travel costs for the African American and the White populations, which is shown in Test No 1 below. The comparison will be between the total travel costs value generated for each of the populations. In gdistance, this will be done by using the transition object that was created using the raster package, which importantly contains the values for moving from cell to cell. The values will coordinate to three different categories, with a small value representing roads, a high value representing non-roads, and a higher value representing water. This means, when the test is run, each time it will travel on the least cost path, therefore along the roads, to get from individual houses to the town market.</p>
+<p>Another function of the gdistance package is that it can show what those least cost paths are. This test is shown in Test No 2 below. The purpose of this test is that when run on every house in the county, it will show which roads were travelled most often when travelling to the town market in Easton.</p>
+<p>For analysis, the ggplot package was used. The results from the gdistance travel cost tests are shown in the boxplots below. This allows for easy comparison between the different samples of the dataset, and is accompanied by a table with the numeric results as well.</p>
 <p>These packages need to be installed:</p>
 <pre class="r"><code>library(maptools)
 library(sf)
@@ -382,79 +401,296 @@ library(rgdal)
 library(methods)
 library(ggplot2)
 library(rasterVis)
-library(tidyverse)</code></pre>
-<p>Then the shapefiles and elevation raster must be read in.</p>
-<pre class="r"><code>library(maptools)
-library(sf)
-library(raster)
-library(rgdal)
-library(methods)
-library(ggplot2)
-library(rasterVis)
 library(tidyverse)
-
-#This is the road shapefile from the historic map
+library(gdistance)
+library(rgeos)
+library(dplyr)
+library(data.table)
+library(foreach)
+library(knitr)
+library(kableExtra)</code></pre>
+<p>To create the project raster necessary for analysis, the shapefiles of the houses and roads must be read in along with the elevation raster.</p>
+<pre class="r"><code>#This is the road shapefile from the historic map
 roads&lt;-read_sf(&quot;_data/1877_roads_talbot.shp&quot;)%&gt;%
   st_transform(crs=4326)
 
 #This is the houses shapefile from the historic map and Census Data
 houses&lt;-read_sf(&quot;_data/1877_houses_talbot.shp&quot;)%&gt;%
   st_transform(crs=4326)
+#converting to spatial
+houses_sp &lt;- as_Spatial(houses)
 
 #This is the elevation raster of the area, cropped to the extent of the roads shapefile
 elev_crop&lt;-raster(&quot;https://github.com/geo511-2019/2019-geo511-project-jpreg/raw/master/_data/cropped_elevation_raster_talbot.tif&quot;)</code></pre>
 </div>
 <div id="creation-of-the-project-raster" class="section level1">
 <h1>Creation of the Project Raster</h1>
-<p>The code below will create the project raster. This raster combines the elevation tif and road shapefile into a single raster, and assigns values for the land type. Road is given a value of 1, land is given a value of 4, and water is given a value of 10. With this information, the gdistance package will eventually be able to calculate travel costs.</p>
-<pre class="r"><code>#This assigns the proper value to water: water
+<p>The code below will create the project raster. This raster combines the elevation tif and road shapefile into a single raster, and assigns values for the land type. Road is given a value of 1, land is given a value of 4, and water is given a value of 10. These values have been chosen so that travel will take place along the roadways. With this information, the gdistance package will eventually be able to calculate travel costs from the houses to the town market in Easton.</p>
+<pre class="r"><code>#function for values of roads over water: bridges
+bridges &lt;- function(x) ifelse (x==13 | x==6 | x==7, 1, x)
+
+#This assigns the value for water using the elevation data
 water=(elev_crop&lt;0.001)*6
 
 #Turning the Roads Shapefile into Raster Format
 roads_raster &lt;- rasterize(roads, water, field=1, background=4)
 
-#function for values of roads over water: bridges
-bridges &lt;- function(x) ifelse (x==13, 1, x)
-
 #Assigning different values to the land cover types
 Land_Cover_Guide = c(
-  water=10,
-  roads=1,
-  land=4)
+  &#39;water (10)&#39;=10,
+  &#39;roads (1)&#39; =1,
+  &#39;land (4)&#39; =4)
 
 lcd=data.frame(
   ID=Land_Cover_Guide,
   landcover=names(Land_Cover_Guide),
-  col=c(&quot;blue&quot;, &quot;black&quot;, &quot;red&quot;),
+  col=c(&quot;cadetblue&quot;, &quot;peachpuff2&quot;, gray(.5)),
   stringsAsFactors = F)
 
-talbot_r &lt;- water+roads_raster %&gt;% calc(bridges)
+talbot_r &lt;- water+roads_raster
+talbot_r2 &lt;- calc(talbot_r, fun=bridges)
 
-talbot_rf=as.factor(talbot_r)
+talbot_rf=as.factor(talbot_r2)
 levels(talbot_rf)=left_join(levels(talbot_rf)[[1]], lcd)
 
-#The code creates a plot of the project raster
-roads_water_plot&lt;-gplot(talbot_rf) +
-  geom_raster(mapping=aes(fill=value)) +
+
+#plot of the raster (talbot_r2 object)
+roads_water_plot&lt;-gplot(talbot_rf, maxpixels=1e6) +
+  geom_raster(mapping=aes(fill=as.factor(value))) +
+  scale_fill_manual(values=levels(talbot_rf)[[1]]$col,
+                    labels=levels(talbot_rf)[[1]]$landcover,
+                    name=&quot;Landcover Type&quot;)+
   coord_cartesian() +
   xlab(&quot;longitude&quot;) +
-  ylab(&quot;latitude&quot;)
+  ylab(&quot;latitude&quot;) +
+  ggtitle(&quot;Talbot County Project Raster&quot;)
 roads_water_plot</code></pre>
 <p><img src="index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
-<div id="results" class="section level1">
-<h1>Results</h1>
-<p>This is where the results of the gdistance tests will be displayed in table format</p>
+<div id="test-no-1-travel-cost-distances" class="section level1">
+<h1>Test No 1: Travel Cost Distances</h1>
+<p>The gdistance package calculates the travel costs when going from a start point in space to an end point in space. To do this, the package requires a base raster and a transition object. The base layer holds the values for each cell, and the transition object determines how permeable each cell is. In this way, the package relies on graph theory to determine costs.</p>
+<p>Mathematically, this test will use Dijkstra’s algorithm to run the calculations. Essentially, this algorithm adds up the values as you travel along the least cost path from point A to point B. To determine the differences in travel costs between the White and non-White populations, the houses shapefile needs to be subdivided by race, so that there is a shapefile for the white houses and the non-white houses. The transition object is simply 1/conductance, which is 1 over our project raster (as a function: talbot_rf).</p>
+<p>The point of the market has been denoted as 265 in the houses shapefile. Therefore gdistance’s costDistance function will calculate the distance from each shapefile to that point. The result is the total travel cost for all houses of the shapefile to the market. This test will determine the cost distances of four different subsets: the white population, the non-white population, a random sample of the white population (~40%, n=70), and a random sample of the non-white population (~40%, n=7).</p>
+<p>The code below shows this process:</p>
+<pre class="r"><code>#filtering houses to create White population table and SpatialPointsDataFrame: houses_w, houses_w_sp 
+houses_w&lt;-houses%&gt;%
+  filter(race == &quot;White&quot;)
+
+houses_w_sp&lt;-as_Spatial(houses_w)
+
+#filtering houses to create Non-White and White population table and SpatialPointsDataFrame: houses_nw, houses_nw_sp
+houses_nw&lt;-houses%&gt;%
+  filter(race == c(&quot;Black&quot;, &quot;Mulatto&quot;))
+
+houses_nw_sp&lt;-as_Spatial(houses_nw)
+
+#travel cost function
+trCost &lt;- transition(1/talbot_rf, transitionFunction = mean, directions=8, symm=F)
+trCost &lt;- geoCorrection(trCost, type=&quot;c&quot;)
+
+#distance measures to white population
+dist_w &lt;- costDistance(trCost, houses_w_sp, houses_sp[265,])
+dist_w_df &lt;- data.frame(dist_w)
+
+#distance measures to non-white population
+dist_nw &lt;- costDistance(trCost, houses_nw_sp, houses_sp[265,])
+dist_nw_df &lt;-data.frame(dist_nw)
+
+#distance measures to random sample of white population
+dist_w_dt&lt;- data.table(dist_w)
+randw1&lt;-dist_w_dt[sample(.N, 70)]
+
+#distance measures to random sample of non-White population
+dist_nw_dt &lt;- data.table(dist_nw)
+randnw1&lt;-dist_nw_dt[sample(.N, 7)]</code></pre>
+</div>
+<div id="results-of-test-no-1" class="section level1">
+<h1>Results of Test No 1</h1>
+<p>The travel cost distances for the white, non-white, random white, and random non-white are shown below, along with the code used to create them.</p>
+<pre class="r"><code>#combining all of the samples to display together
+data=bind_rows(
+  data.frame(cost_distance=randnw1$V1, race=&quot;random non-white&quot;),
+  data.frame(cost_distance=randw1$V1, race=&quot;random white&quot;),
+  data.frame(cost_distance=dist_nw_dt$V1, race=&quot;non-white&quot;),
+  data.frame(cost_distance=dist_w_dt$V1, race=&quot;white&quot;)) %&gt;%
+  mutate(race = factor(race, levels=c(&quot;white&quot;, &quot;non-white&quot;, &quot;random white&quot;, &quot;random non-white&quot;)))
+
+boxplots_data&lt;-data %&gt;%
+  group_by(race)%&gt;%
+  summarize(min=min(cost_distance), Q1=quantile(cost_distance, .25), median=median(cost_distance), 
+            mean=mean(cost_distance), Q3=quantile(cost_distance, .75),
+            max=max(cost_distance))
+
+data_boxplots &lt;- ggplot(data=data, mapping = aes(y=cost_distance, x=race)) +
+                          geom_boxplot() +
+                          xlab(label=&quot;Race&quot;) +
+                          ylab(label=&quot;Cost Distance&quot;)+
+                          ggtitle(&quot;Travel Costs for the White and non-White Populations&quot;)
+data_boxplots</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>kable(boxplots_data) %&gt;%
+  kable_styling(bootstrap_options = c(&quot;striped&quot;, &quot;hover&quot;, &quot;condensed&quot;, &quot;responsive&quot;))</code></pre>
+<table class="table table-striped table-hover table-condensed table-responsive" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+race
+</th>
+<th style="text-align:right;">
+min
+</th>
+<th style="text-align:right;">
+Q1
+</th>
+<th style="text-align:right;">
+median
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+Q3
+</th>
+<th style="text-align:right;">
+max
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+white
+</td>
+<td style="text-align:right;">
+825.6843
+</td>
+<td style="text-align:right;">
+4743.947
+</td>
+<td style="text-align:right;">
+7444.012
+</td>
+<td style="text-align:right;">
+7848.729
+</td>
+<td style="text-align:right;">
+10509.536
+</td>
+<td style="text-align:right;">
+17560.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+non-white
+</td>
+<td style="text-align:right;">
+3821.4865
+</td>
+<td style="text-align:right;">
+7457.759
+</td>
+<td style="text-align:right;">
+8034.300
+</td>
+<td style="text-align:right;">
+8451.805
+</td>
+<td style="text-align:right;">
+8434.278
+</td>
+<td style="text-align:right;">
+13539.12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+random white
+</td>
+<td style="text-align:right;">
+1281.8834
+</td>
+<td style="text-align:right;">
+4858.558
+</td>
+<td style="text-align:right;">
+7482.435
+</td>
+<td style="text-align:right;">
+7841.323
+</td>
+<td style="text-align:right;">
+10196.863
+</td>
+<td style="text-align:right;">
+16454.79
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+random non-white
+</td>
+<td style="text-align:right;">
+3821.4865
+</td>
+<td style="text-align:right;">
+6690.884
+</td>
+<td style="text-align:right;">
+7740.809
+</td>
+<td style="text-align:right;">
+7764.442
+</td>
+<td style="text-align:right;">
+8155.370
+</td>
+<td style="text-align:right;">
+13096.29
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="test-no-2-most-travelled-roads" class="section level1">
+<h1>Test No 2: Most Travelled Roads</h1>
+<p>Another function of the gdistance package is the shortestPath function, which calculates the shortest path between points. The previous test used the algorithm to get the values pertaining to the distances travelled, but did not store what that path actually was in space. The shortestPath function will do just that. It will produce the shortest paths for the houses to the market in Easton visually.</p>
+<p>For this test, the shortestPath will be run on every house from the houses shapefile. In other words, it will generate the shortest path for each house of the dataset to the Easton town market. From this, it will show which roads in Talbot County were travelled the most when the population travelled to Easton to go to the market, or for when they travelled to Easton for any other purposes.</p>
+</div>
+<div id="results-of-test-no-2" class="section level1">
+<h1>Results of Test No 2</h1>
+<p>The results of the test are shown below, along with the map of the county showing all of the roads for reference. The code for the test is also included. The test took two steps, creating a loop to run the test on every one of the houses, and a calculation which added all of the tests up. Once summed, the paths with the highest values indicate which paths were travelled the most.</p>
+<pre class="r"><code>#foreach loop over houses_sp with gdistance::shortestPath
+houses_paths &lt;- foreach(i=1:264, .combine = &#39;stack&#39;) %do%{
+  shortestPath(trCost, houses_sp[i,], houses_sp[265,])%&gt;%
+  raster()}
+
+#summing together the paths
+cost_sum=(calc(houses_paths, sum, na.rm=T))
+
+raster_plot &lt;- gplot(cost_sum, maxpixels=1e6) +
+  geom_raster(mapping=aes(fill=value)) +
+  coord_cartesian() +
+  scale_fill_gradientn(colors=c(low=&#39;white&#39;, high=&#39;forestgreen&#39;)) +
+  xlab(&quot;longitude&quot;) +
+  ylab(&quot;latitude&quot;) +
+  ggtitle(&quot;Most Travelled Roads in Talbot County to Easton c.1880&quot;)
+raster_plot</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>roads_water_plot</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
+<p>The first test showed that the cost of travel to the Easton town market was higher for the African American population of Talbot County than it was for the White population of Talbot County around 1880. The median travel cost for the entire White population was 7444 units, whereas the median travel cost for the entire African American population was 8034 units. Their means were 7848 and 8451 respectively. Both of these trends were echoed in the random samples of each population as well.</p>
+<p>The second test showed that the road leading west out of Easton was the most travelled road in the county when travelling to Easton. This is likely due to the fact that most of the population in the west of the county had to use this road to get to town, wheras there were multiple roads into town along the eastern part of the county.</p>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
-The first data source for this project is the Lake, Griffing and Stevenson 1877 map, “An illustrated atlas of Talbot and Dorchester Counties, Maryland”. This map is available on <a href="https://jscholarship.library.jhu.edu/handle/1774.2/34140">Johns Hopkins Library.</a> It includes the names of the property owners throughout Talbot County in 1877, along with the locations of their dwelling places. In addition, the roads are displayed on the map, which will be used to create the travel cost raster necessary for analysis. The location of the market is determined from another page in this atlas displaying the town of Easton in Talbot County.
-</p>
-<p>
+<p>The first data source for this project is the Lake, Griffing and Stevenson 1877 map, “An illustrated atlas of Talbot and Dorchester Counties, Maryland”. This map is available on <a href="https://jscholarship.library.jhu.edu/handle/1774.2/34140">Johns Hopkins Library.</a> It includes the names of the property owners throughout Talbot County in 1877, along with the locations of their dwelling places. In addition, the roads are displayed on the map, which will be used to create the travel cost raster necessary for analysis. The location of the market is determined from another page in this atlas displaying the town of Easton in Talbot County.</p>
 <p>The second data source is the 1880 Talbot County Census data, available from <a href="https://www.familysearch.org/search/catalog/1417529?availability=Family%20History%20Library">FamilySearch.</a> The names from the historic map were paired against the census record to create the necessary dataset that distinguishes between the African American and White population represented on the map.</p>
+<p>Etten, J. V. (2017). R package gdistance: distances and routes on geographical grids. <a href="https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf">https://cran.r-project.org/web/packages/gdistance/vignettes/gdistance1.pdf</a></p>
 </div>
 
 <!-- give the footer some space -->
@@ -505,6 +741,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
