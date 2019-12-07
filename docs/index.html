@@ -471,7 +471,7 @@ roads_water_plot</code></pre>
 <h1>Test No 1: Travel Cost Distances</h1>
 <p>The gdistance package calculates the travel costs when going from a start point in space to an end point in space. To do this, the package requires a base raster and a transition object. The base layer holds the values for each cell, and the transition object determines how permeable each cell is. In this way, the package relies on graph theory to determine costs.</p>
 <p>Mathematically, this test will use Dijkstra’s algorithm to run the calculations. Essentially, this algorithm adds up the values as you travel along the least cost path from point A to point B. To determine the differences in travel costs between the White and non-White populations, the houses shapefile needs to be subdivided by race, so that there is a shapefile for the white houses and the non-white houses. The transition object is simply 1/conductance, which is 1 over our project raster (as a function: talbot_rf).</p>
-<p>The point of the market has been denoted as 265 in the houses shapefile. Therefore gdistance’s costDistance function will calculate the distance from each shapefile to that point. The result is the total travel cost for all houses of the shapefile to the market. This test will determine the cost distances of four different subsets: the white population, the non-white population, a random sample of the white population (~40%, n=70), and a random sample of the non-white population (~40%, n=7).</p>
+<p>The point of the market has been denoted as 265 in the houses shapefile. Therefore gdistance’s costDistance function will calculate the distance from each shapefile to that point. The result is the total travel cost for all houses of the shapefile to the market. This test will determine the cost distances of four different subsets: the white population, the non-white population, a random sample of the white population (40%, n=70), and a random sample of the non-white population (40%, n=7).</p>
 <p>The code below shows this process:</p>
 <pre class="r"><code>#filtering houses to create White population table and SpatialPointsDataFrame: houses_w, houses_w_sp 
 houses_w&lt;-houses%&gt;%
@@ -609,22 +609,22 @@ non-white
 random white
 </td>
 <td style="text-align:right;">
-1281.8834
+825.6843
 </td>
 <td style="text-align:right;">
-4858.558
+4872.418
 </td>
 <td style="text-align:right;">
-7482.435
+7224.101
 </td>
 <td style="text-align:right;">
-7841.323
+7990.929
 </td>
 <td style="text-align:right;">
-10196.863
+10556.974
 </td>
 <td style="text-align:right;">
-16454.79
+15815.41
 </td>
 </tr>
 <tr>
@@ -632,19 +632,19 @@ random white
 random non-white
 </td>
 <td style="text-align:right;">
-3821.4865
+6350.9084
 </td>
 <td style="text-align:right;">
-6690.884
+7368.417
 </td>
 <td style="text-align:right;">
-7740.809
+8034.300
 </td>
 <td style="text-align:right;">
-7764.442
+8830.765
 </td>
 <td style="text-align:right;">
-8155.370
+9798.513
 </td>
 <td style="text-align:right;">
 13096.29
